@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TIMI E-Commerce</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .main-content {
+      flex-grow: 1;
+      padding: 2rem;
+      margin-left: 0;
+      transition: margin-left 0.3s ease;
+    }
+    .container.sidebar-open .main-content { margin-left: 250px; }
+
+    .status-box {
+      background-color: #ffffffcc;
+      padding: 2rem;
+      border-radius: 20px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      backdrop-filter: blur(6px);
+    }
+    h2 {
+      text-align: center;
+      color: #000;
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      letter-spacing: 1px;
+    }
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      margin-top: 1rem;
+    }
+    th {
+      background-color: #000;
+      color: white;
+      padding: 0.8rem;
+      border-radius: 10px 10px 0 0;
+    }
+    td {
+      background-color: #fff;
+      color: #000;
+      padding: 0.9rem;
+      text-align: center;
+      border-bottom: 2px solid #ddd;
+      border-radius: 0 0 10px 10px;
+    }
+    tr:hover td {
+      background-color: #f9f9f9;
+      transition: background 0.2s ease;
+    }
+    .status {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 30px;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    .Paid { background-color: #27ae60; color: white; }
+    .Processing { background-color: #e67e22; color: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <div id="menu-icon" class="menu-icon">&#9776;</div>
+    <div class="login">&#128100; LOG IN</div>
+  </header>
+
+  <div class="container">
+    <aside id="sidebar" class="sidebar">
+      <div class="brand">TIMI</div>
+      <nav class="nav">
+        <a href="editprofile.html">USER PROFILE</a>
+        <a href="product.html">PRODUCT</a>
+        <a href="order.html">ORDER</a>
+        <a href="payment.html">PAYMENT</a>
+        <a href="delivery.html">DELIVERY</a>
+        <a href="reviews&rating.html">REVIEW & RATING</a>
+        <a href="dashboard.html">Back to dashboard</a>
+      </nav>
+    </aside>
+
+    <main class="main-content">
+      <div class="status-box">
+        <h2>PAYMENT DETAILS</h2>
+        <table id="payment-table">
+          <thead>
+            <tr>
+              <th>Order ID</th>
+              <th>Name</th>
+              <th>Product</th>
+              <th>Total</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="payment-body">
+            <!-- Orders from Firebase will be inserted here -->
+          </tbody>
+        </table>
+      </div>
+    </main>
+  </div>
+
+    <script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const menuIcon = document.getElementById("menu-icon");
+    const sidebar = document.getElementById("sidebar");
+
+    menuIcon.addEventListener("click", () => {
+      sidebar.classList.toggle("sidebar-open");
+    });
+  });
+</script>
+
+
+ <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+
+<!-- Firebase with Firestore (converted from Realtime DB) -->
+<script type="module">
+  import { db, collection, onSnapshot } from './firebase-config.js';
+
+  const paymentBody = document.getElementById("payment-body");
+
+  function createStatusBadge(status) {
+    return `<span class="status ${status}">${status}</span>`;
+  }
+
+  function loadOrders() {
+    onSnapshot(collection(db, "orders"), (snapshot) => {
+      paymentBody.innerHTML = "";
+      snapshot.forEach((docSnap) => {
+        const order = docSnap.data();
+        const id = docSnap.id;
+        const status = order.status || 'Pending';
+
+        if (status === 'Paid' || status === 'Processing') {
+          const row = `
+            <tr>
+              <td>${id}</td>
+              <td>${order.customerName || 'N/A'}</td>
+              <td>${order.products?.map(p => `${p.name} (${p.quantity})`).join("<br>") || 'N/A'}</td>
+              <td>RM${order.total || '0.00'}</td>
+              <td>${createStatusBadge(status)}</td>
+            </tr>
+          `;
+          paymentBody.innerHTML += row;
+        }
+      });
+    });
+  }
+
+  loadOrders();
+</script>
+</body>
+</html>
