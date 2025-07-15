@@ -155,7 +155,7 @@
           window.location.href = "../ADMIN.HTML/dashboard.html"; 
         } else {
           errorDiv.textContent = "Access denied: You are not an admin.";
-          await signOut(auth); // logout terus kalau bukan admin
+          await signOut(auth); 
         }
       } catch (error) {
         errorDiv.textContent = error.message;
