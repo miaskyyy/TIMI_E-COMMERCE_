@@ -1,5 +1,3 @@
-script.js (paling fnl)
-
 // Toast notification function
 function showToast(message) {
   const toast = document.getElementById('toast');
