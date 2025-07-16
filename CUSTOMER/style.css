@@ -68,7 +68,7 @@ main {
 }
 
 .hero {
-  background: url(images/backgroundTimi.jpg) no-repeat center center/cover;
+  background: url(backgroundTimi.jpg) no-repeat center center/cover;
   border-radius: 12px;
   color: white;
   padding: 6rem 2rem;
