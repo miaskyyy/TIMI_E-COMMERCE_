@@ -187,18 +187,18 @@
             })
           });
 
-          const text = await res.text();
           let parsed;
           try {
-            parsed = JSON.parse(text);
+            parsed = await res.json(); // this auto-parses JSON
           } catch (err) {
+            const raw = await res.text(); // try to print raw response
             alert("Invalid response from ToyyibPay.");
-            console.error(text);
+            console.error("Server responded with:", raw);
             return;
           }
 
           if (parsed[0] && parsed[0].BillCode) {
-            window.location.href = window.location.href = `https://toyyibpay.com/${parsed[0].BillCode}`;
+            window.location.href = `https://toyyibpay.com/${parsed[0].BillCode}`;
           } else {
             alert("Failed to create payment. Try again.");
           }
