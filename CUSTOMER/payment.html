@@ -187,13 +187,13 @@
             })
           });
 
+          const text = await res.text();
           let parsed;
           try {
-            parsed = await res.json(); // this auto-parses JSON
+            parsed = JSON.parse(text);
           } catch (err) {
-            const raw = await res.text(); // try to print raw response
             alert("Invalid response from ToyyibPay.");
-            console.error("Server responded with:", raw);
+            console.error(text);
             return;
           }
 
